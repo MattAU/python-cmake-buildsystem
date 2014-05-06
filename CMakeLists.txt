@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 2.8.6)
 
 set(PY_VERSION_MAJOR 2)
 set(PY_VERSION_MINOR 7)
-set(PY_VERSION_PATCH 3)
+set(PY_VERSION_PATCH 6)
+set(PY_VERSION_STR "${PY_VERSION_MAJOR}.${PY_VERSION_MINOR}.${PY_VERSION_PATCH}")
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_CONFIGURATION_TYPES Release CACHE STRING "Release configuration" FORCE)
@@ -63,8 +64,8 @@ elseif(NOT "${SRC_DIR}" STREQUAL "" AND EXISTS ${SRC_DIR}/${_landmark})
     # Do nothing - SRC_DIR is already set.
 else()
     foreach(dirname
-        cpython-${PY_VERSION_MAJOR}.${PY_VERSION_MINOR}.${PY_VERSION_PATCH}
-        Python-${PY_VERSION_MAJOR}.${PY_VERSION_MINOR}.${PY_VERSION_PATCH}
+        cpython-${PY_VERSION_STR}
+        Python-${PY_VERSION_STR}
     )
         set(SRC_DIR "${CMAKE_CURRENT_BINARY_DIR}/../${dirname}")
         if(EXISTS ${SRC_DIR}/${_landmark})
@@ -76,18 +77,14 @@ if(NOT IS_ABSOLUTE ${SRC_DIR})
     set(SRC_DIR ${CMAKE_CURRENT_BINARY_DIR}/${SRC_DIR})
 endif()
 get_filename_component(_parent_dir ${CMAKE_CURRENT_BINARY_DIR} PATH)
-set(_download_link "http://www.python.org/ftp/python/2.7.3/Python-2.7.3.tgz")
-set(_extracted_dir "Python-2.7.3")
-if(WIN32)
-    set(_download_link "https://github.com/jonashaag/cpython/archive/v2.7.3.zip")
-    set(_extracted_dir "cpython-2.7.3")
-endif(WIN32)
+set(_download_link "http://www.python.org/ftp/python/${PY_VERSION_STR}/Python-${PY_VERSION_STR}.tgz")
+set(_extracted_dir "Python-${PY_VERSION_STR}")
 if(NOT EXISTS ${SRC_DIR}/${_landmark})
     message(FATAL_ERROR "Failed to locate python source.
 The searched locations were:
    <CMAKE_CURRENT_BINARY_DIR>
-   <CMAKE_CURRENT_BINARY_DIR>/../cpython-${PY_VERSION_MAJOR}.${PY_VERSION_MINOR}.${PY_VERSION_PATCH}
-   <CMAKE_CURRENT_BINARY_DIR>/../Python-${PY_VERSION_MAJOR}.${PY_VERSION_MINOR}.${PY_VERSION_PATCH}
+   <CMAKE_CURRENT_BINARY_DIR>/../cpython-${PY_VERSION_STR}
+   <CMAKE_CURRENT_BINARY_DIR>/../Python-${PY_VERSION_STR}
    <SRC_DIR>
 You could try to:
   1) download ${_download_link}
@@ -297,7 +294,7 @@ export(TARGETS ${PYTHON_TARGETS} APPEND FILE ${CONFIG_BUILD_DIR}/PythonTargets.c
 set(python_config_version ${CONFIG_BUILD_DIR}/PythonConfigVersion.cmake)
 write_basic_package_version_file(
     ${python_config_version}
-    VERSION ${PY_VERSION_MAJOR}.${PY_VERSION_MINOR}.${PY_VERSION_PATCH}
+    VERSION ${PY_VERSION_STR}
     COMPATIBILITY SameMajorVersion
 )
 
